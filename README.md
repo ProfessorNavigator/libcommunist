@@ -19,7 +19,7 @@ See `Documentation.pdf` file of this repository for detailed description of libr
 
 ## License
 
-GPLv3+ (see `COPYING`).
+GPLv3 (see `COPYING`).
 
 ## Donation
 
