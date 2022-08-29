@@ -225,6 +225,19 @@ NetworkOperations::NetworkOperations (
     {
       rellistpath = std::get<1> (*itprv);
     }
+
+  itprv = std::find_if (prefvect.begin (), prefvect.end (), []
+  (auto &el)
+    {
+      return std::get<0>(el) == "HolePunchMech";
+    });
+  if (itprv != prefvect.end ())
+    {
+      if (std::get<1> (*itprv) == "active")
+	{
+	  Hole_Punch = true;
+	}
+    }
 }
 
 NetworkOperations::~NetworkOperations ()
@@ -523,117 +536,126 @@ void
 NetworkOperations::holePunch (int sock, uint32_t ip,
 			      std::array<char, 32> otherkey)
 {
-  holepunchstopmtx.lock ();
-  int firstport = 1024;
-  auto hpsit = std::find_if (holepunchstop.begin (), holepunchstop.end (),
-			     [otherkey]
-			     (auto &el)
-			       {
-				 return std::get<0>(el) == otherkey;
-			       });
-  if (hpsit != holepunchstop.end ())
+  if (Hole_Punch)
     {
-      firstport = std::get<1> (*hpsit);
-      if (firstport >= 65535)
+      holepunchstopmtx.lock ();
+      int firstport = 1024;
+      auto hpsit = std::find_if (holepunchstop.begin (), holepunchstop.end (),
+				 [otherkey]
+				 (auto &el)
+				   {
+				     return std::get<0>(el) == otherkey;
+				   });
+      if (hpsit != holepunchstop.end ())
+	{
+	  firstport = std::get<1> (*hpsit);
+	  if (firstport >= 65535)
+	    {
+	      firstport = 1024;
+	      std::get<1> (*hpsit) = firstport;
+	    }
+	}
+      else
 	{
 	  firstport = 1024;
-	  std::get<1> (*hpsit) = firstport;
+	  holepunchstop.push_back (std::make_tuple (otherkey, firstport));
 	}
-    }
-  else
-    {
-      firstport = 1024;
-      holepunchstop.push_back (std::make_tuple (otherkey, firstport));
-    }
-  holepunchstopmtx.unlock ();
-  std::vector<char> ipv;
-  ipv.resize (INET_ADDRSTRLEN);
-  uint32_t lip = ip;
-  std::cout << "HP to " << inet_ntop (AF_INET, &lip, ipv.data (), ipv.size ())
-      << std::endl;
-  std::tuple<lt::dht::public_key, lt::dht::secret_key> keypair;
-  keypair = lt::dht::ed25519_create_keypair (seed);
-  std::array<char, 32> key = std::get<0> (keypair).bytes;
-  std::string msg = "TT";
-  std::vector<char> msgv (key.begin (), key.end ());
-  std::copy (msg.begin (), msg.end (), std::back_inserter (msgv));
-  std::string unm = lt::aux::to_hex (otherkey);
-  lt::dht::public_key othpk;
-  othpk.bytes = otherkey;
-  AuxFuncNet af;
-  std::array<char, 32> scalar;
-  scalar = lt::dht::ed25519_key_exchange (othpk, std::get<1> (keypair));
-  othpk = lt::dht::ed25519_add_scalar (othpk, scalar);
-  std::string passwd = lt::aux::to_hex (othpk.bytes);
-  msgv = af.cryptStrm (unm, passwd, msgv);
+      holepunchstopmtx.unlock ();
+      std::vector<char> ipv;
+      ipv.resize (INET_ADDRSTRLEN);
+      uint32_t lip = ip;
+      std::cout << "HP to "
+	  << inet_ntop (AF_INET, &lip, ipv.data (), ipv.size ()) << std::endl;
+      std::tuple<lt::dht::public_key, lt::dht::secret_key> keypair;
+      keypair = lt::dht::ed25519_create_keypair (seed);
+      std::array<char, 32> key = std::get<0> (keypair).bytes;
+      std::string msg = "TT";
+      std::vector<char> msgv (key.begin (), key.end ());
+      std::copy (msg.begin (), msg.end (), std::back_inserter (msgv));
+      std::string unm = lt::aux::to_hex (otherkey);
+      lt::dht::public_key othpk;
+      othpk.bytes = otherkey;
+      AuxFuncNet af;
+      std::array<char, 32> scalar;
+      scalar = lt::dht::ed25519_key_exchange (othpk, std::get<1> (keypair));
+      othpk = lt::dht::ed25519_add_scalar (othpk, scalar);
+      std::string passwd = lt::aux::to_hex (othpk.bytes);
+      msgv = af.cryptStrm (unm, passwd, msgv);
 
-  for (int i = firstport; i < 65536; i = i + 1)
-    {
-      if (cancel > 0)
+      for (int i = firstport; i < 65536; i = i + 1)
 	{
-	  break;
-	}
-      sockaddr_in op =
-	{ };
-      op.sin_family = AF_INET;
-      op.sin_port = htons (i);
-      op.sin_addr.s_addr = ip;
-      int count = 0;
-      int ch = -1;
-      while (ch < 0)
-	{
-	  ch = sendto (sock, msgv.data (), msgv.size (), 0,
-		       (struct sockaddr*) &op, sizeof(op));
-	  if (ch < 0)
+	  if (cancel > 0)
 	    {
+	      break;
+	    }
+	  sockaddr_in op =
+	    { };
+	  op.sin_family = AF_INET;
+	  op.sin_port = htons (i);
+	  op.sin_addr.s_addr = ip;
+	  int count = 0;
+	  int ch = -1;
+	  while (ch < 0)
+	    {
+	      ch = sendto (sock, msgv.data (), msgv.size (), 0,
+			   (struct sockaddr*) &op, sizeof(op));
+	      if (ch < 0)
+		{
 #ifdef __linux
-	      std::cerr << "Hole punch error: " << strerror (errno)
-		  << std::endl;
+		  std::cerr << "Hole punch error: " << strerror (errno)
+		      << std::endl;
 #endif
 #ifdef _WIN32
 	      ch = WSAGetLastError ();
 	      std::cerr << "Hole punch error: " << ch << std::endl;
 #endif
-	    }
-	  count++;
-	  if (count > 10)
-	    {
-	      holepunchstopmtx.lock ();
-	      hpsit = std::find_if (holepunchstop.begin (),
-				    holepunchstop.end (), [otherkey]
-				    (auto &el)
-				      {
-					return std::get<0>(el) == otherkey;
-				      });
-	      if (hpsit != holepunchstop.end ())
-		{
-		  std::get<1> (*hpsit) = i;
 		}
-	      else
+	      count++;
+	      if (count > 10)
 		{
-		  holepunchstop.push_back (std::make_tuple (otherkey, i));
+		  holepunchstopmtx.lock ();
+		  hpsit = std::find_if (holepunchstop.begin (),
+					holepunchstop.end (), [otherkey]
+					(auto &el)
+					  {
+					    return std::get<0>(el) == otherkey;
+					  });
+		  if (hpsit != holepunchstop.end ())
+		    {
+		      std::get<1> (*hpsit) = i;
+		    }
+		  else
+		    {
+		      holepunchstop.push_back (std::make_tuple (otherkey, i));
+		    }
+		  holepunchstopmtx.unlock ();
+		  return void ();
 		}
-	      holepunchstopmtx.unlock ();
-	      return void ();
+	      usleep (100);
 	    }
-	  usleep (100);
 	}
-    }
-  holepunchstopmtx.lock ();
-  hpsit = std::find_if (holepunchstop.begin (), holepunchstop.end (), [otherkey]
-  (auto &el)
-    {
-      return std::get<0>(el) == otherkey;
-    });
-  if (hpsit != holepunchstop.end ())
-    {
-      std::get<1> (*hpsit) = 1024;
+      holepunchstopmtx.lock ();
+      hpsit = std::find_if (holepunchstop.begin (), holepunchstop.end (),
+			    [otherkey]
+			    (auto &el)
+			      {
+				return std::get<0>(el) == otherkey;
+			      });
+      if (hpsit != holepunchstop.end ())
+	{
+	  std::get<1> (*hpsit) = 1024;
+	}
+      else
+	{
+	  holepunchstop.push_back (std::make_tuple (otherkey, 1024));
+	}
+      holepunchstopmtx.unlock ();
     }
   else
     {
-      holepunchstop.push_back (std::make_tuple (otherkey, 1024));
+      std::cout << "Hole punch disabled, skipping holePunch function"
+	  << std::endl;
     }
-  holepunchstopmtx.unlock ();
 }
 
 int

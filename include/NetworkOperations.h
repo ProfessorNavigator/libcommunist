@@ -344,6 +344,8 @@ private:
 
   std::vector<std::array<char, 32>> sendbyrelay;
   std::mutex sendbyrelaymtx;
+
+  bool Hole_Punch = false;
 };
 
 #endif /* NETWORKOPERATIONS_H_ */
