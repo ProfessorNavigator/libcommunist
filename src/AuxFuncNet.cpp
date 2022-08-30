@@ -210,8 +210,8 @@ AuxFuncNet::packing (std::string source, std::string out)
 	  z = zip_open (out.c_str (), ZIP_TRUNCATE | ZIP_CREATE, &er);
 	  if (er < 1)
 	    {
-	      std::vector<std::filesystem::path> listf;
-	      std::vector<std::filesystem::path> listd;
+	      std::vector < std::filesystem::path > listf;
+	      std::vector < std::filesystem::path > listd;
 	      std::string line;
 	      if (!std::filesystem::is_empty (dir))
 		{
@@ -506,7 +506,7 @@ int
 AuxFuncNet::unpacking (std::string archadress, std::string outfolder)
 {
   int result = 0;
-  std::vector<std::string> filenames;
+  std::vector < std::string > filenames;
   std::string line, archnm;
   int er = 0;
   er = fileNames (archadress, filenames);
@@ -798,7 +798,7 @@ AuxFuncNet::updateMsgLog (
     });
   if (itcont != contacts.end ())
     {
-      int ind = std::get<0> (*itcont);
+      int ind = std::get < 0 > (*itcont);
       std::string filename;
 #ifdef __linux
       filename = std::filesystem::temp_directory_path ().u8string ();
@@ -812,7 +812,7 @@ AuxFuncNet::updateMsgLog (
       filename = oaf.getContactMsgLog (homepath, Username, Password, ind,
 				       filename);
       std::filesystem::path filepath = std::filesystem::u8path (filename);
-      std::vector<std::string> logvect;
+      std::vector < std::string > logvect;
       std::fstream f;
       f.open (filepath, std::ios_base::in);
       if (!f.is_open ())

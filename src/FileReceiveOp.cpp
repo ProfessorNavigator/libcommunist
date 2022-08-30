@@ -119,28 +119,27 @@ FileReceiveOp::fileFQ (std::string msgtype, std::array<char, 32> keyarr,
       replmsg.erase (0, std::string (" RP").size ());
     }
   no->fqblockvmtx.lock ();
-  auto itfqbl = std::find_if (no->fqblockv.begin (), no->fqblockv.end (),
-			      [keyarr, timet, fnm]
-			      (auto &el)
-				{
-				  if (std::get<0>(el) == keyarr && std::get<1>(el) == timet
-				      && std::get<2>(el) == fnm)
-				    {
-				      return true;
-				    }
-				  else
-				    {
-				      return false;
-				    }
-				});
+  auto itfqbl = std::find_if (
+      no->fqblockv.begin (), no->fqblockv.end (), [keyarr, timet, fnm]
+      (auto &el)
+	{
+	  if (std::get<0>(el) == keyarr && std::get<1>(el) == timet
+	      && std::get<2>(el) == fnm)
+	    {
+	      return true;
+	    }
+	  else
+	    {
+	      return false;
+	    }
+	});
   if (itfqbl == no->fqblockv.end ())
     {
       no->fqrcvdmtx.lock ();
       std::tuple<std::array<char, 32>, uint64_t, std::string, std::string,
 	  std::string> fqtup;
       fqtup = std::make_tuple (keyarr, timet, fnm, replmsg, resendmsg);
-      auto itfqrcvd = std::find (
-	  no->fqrcvd.begin (), no->fqrcvd.end (), fqtup);
+      auto itfqrcvd = std::find (no->fqrcvd.begin (), no->fqrcvd.end (), fqtup);
       if (itfqrcvd == no->fqrcvd.end ())
 	{
 	  std::cout << lt::aux::to_hex (keyarr) << " " << timet << " " << fsize

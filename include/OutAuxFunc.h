@@ -49,12 +49,13 @@ public:
   openProfile (std::string homepath, std::string Username, std::string Password,
 	       std::string outfoldername);
   int
-  editProfile (std::string Username, std::string Password, std::string homepath,
-	       std::vector<std::tuple<std::string, std::vector<char>>> &profvect,
-	       std::array<char, 32> &seed,
-	       std::vector<std::tuple<int, std::string>> &contacts,
-	       std::vector<std::string> &Addfriends,
-	       std::vector<std::string> &relaycontlist);
+  editProfile (
+      std::string Username, std::string Password, std::string homepath,
+      std::vector<std::tuple<std::string, std::vector<char>>> &profvect,
+      std::array<char, 32> &seed,
+      std::vector<std::tuple<int, std::string>> &contacts,
+      std::vector<std::string> &Addfriends,
+      std::vector<std::string> &relaycontlist);
   std::vector<std::tuple<int, std::string>>
   readContacts (std::string homepath, std::string Username,
 		std::string Password);

@@ -98,7 +98,7 @@ public:
 	       std::string msgstring);
   std::filesystem::path
   sendFile (std::string key, std::string nick, std::string replstr,
-	       std::string pathtofile);
+	    std::string pathtofile);
   void
   renewProfile (std::string key);
   void

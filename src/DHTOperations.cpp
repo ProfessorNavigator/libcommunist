@@ -1221,9 +1221,7 @@ DHTOperations::dhtThread (std::mutex *thrmtx)
 	  if (errcount > 50)
 	    {
 	      errcount = 0;
-	      std::cerr
-		  << "DHT put error! Check connection."
-		  << std::endl;
+	      std::cerr << "DHT put error! Check connection." << std::endl;
 	      sleep (10);
 	    }
 	}
