@@ -2162,6 +2162,16 @@ NetworkOperations::formMsg (std::string key, std::string nick,
 	{
 	  replstr = "..." + chp.filename ().u8string ();
 	}
+      else
+	{
+	  if (replstr.size () > 40)
+	    {
+	      std::string::size_type n;
+	      n = replstr.find (" ", 40);
+	      replstr.erase (n, std::string::npos);
+	      replstr = replstr + "...";
+	    }
+	}
       line = line + " " + replstr + "\n";
     }
   else
@@ -2269,6 +2279,16 @@ NetworkOperations::formMsg (std::string key, std::string nick,
       if (chp.has_root_path ())
 	{
 	  replstr = "..." + chp.filename ().u8string ();
+	}
+      else
+	{
+	  if (replstr.size () > 40)
+	    {
+	      std::string::size_type n;
+	      n = replstr.find (" ", 40);
+	      replstr.erase (n, std::string::npos);
+	      replstr = replstr + "...";
+	    }
 	}
       line = line + " " + replstr + "\n";
     }
