@@ -2162,10 +2162,6 @@ NetworkOperations::formMsg (std::string key, std::string nick,
 	{
 	  replstr = "..." + chp.filename ().u8string ();
 	}
-      while (replstr.size () > 40)
-	{
-	  replstr.pop_back ();
-	}
       line = line + " " + replstr + "\n";
     }
   else
@@ -2273,10 +2269,6 @@ NetworkOperations::formMsg (std::string key, std::string nick,
       if (chp.has_root_path ())
 	{
 	  replstr = "..." + chp.filename ().u8string ();
-	}
-      while (replstr.size () > 40)
-	{
-	  replstr.pop_back ();
 	}
       line = line + " " + replstr + "\n";
     }
