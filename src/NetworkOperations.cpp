@@ -238,6 +238,24 @@ NetworkOperations::NetworkOperations (
 	  Hole_Punch = true;
 	}
     }
+
+  itprv = std::find_if (prefvect.begin (), prefvect.end (), []
+  (auto &el)
+    {
+      return std::get<0>(el) == "Maintpause";
+    });
+  if (itprv != prefvect.end ())
+    {
+      std::string ms = std::get<1> (*itprv);
+      if (ms != "")
+	{
+	  std::stringstream strm;
+	  std::locale loc ("C");
+	  strm.imbue (loc);
+	  strm << ms;
+	  strm >> Maintpause;
+	}
+    }
 }
 
 NetworkOperations::~NetworkOperations ()
@@ -2964,7 +2982,7 @@ NetworkOperations::commOps ()
 		  blocktime = std::get<1> (*lsit);
 		}
 
-	      if (curtime - blocktime > 1)
+	      if (curtime - blocktime > Maintpause)
 		{
 		  if (lsit != lastsent.end ())
 		    {

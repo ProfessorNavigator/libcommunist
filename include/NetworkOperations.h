@@ -329,6 +329,7 @@ private:
   std::string Sharepath;
   time_t Shuttmt = 600;
   time_t Tmttear = 20;
+  time_t Maintpause = 5;
   uint16_t stunport = 3478;
   std::string Enablestun = "notactive";
   std::string Directinet = "notdirect";
