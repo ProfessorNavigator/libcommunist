@@ -8,8 +8,11 @@ thread_dep = dependency ('threads')
 pkg = import ('pkgconfig')
 if host_machine.system() == 'windows'
 	add_global_arguments ('-U_FILE_OFFSET_BITS', language : 'cpp')
-endif 
+endif
 lib = library('communist', sources : src, include_directories : incdir, dependencies : [zip, gcrypt, libtorrent, thread_dep], version : '1.0.1', install : true)
+
+libcommunist_dep = declare_dependency(include_directories : incdir, link_with : lib)
+
 install_headers('include/LibCommunist.h', 'include/NetOperationsComm.h', subdir : 'libcommunist')
 pkg.generate (lib, name : 'libcommunist', version : '1.0.1', subdirs : 'libcommunist')
 
