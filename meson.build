@@ -9,7 +9,7 @@ pkg = import ('pkgconfig')
 if host_machine.system() == 'windows'
 	add_global_arguments ('-U_FILE_OFFSET_BITS', language : 'cpp')
 endif 
-lib = library('communist', sources : src, include_directories : incdir, dependencies : [zip, gcrypt, libtorrent, thread_dep], version : '1.0.1', install : true)
+lib = library('communist', sources : src, include_directories : incdir, dependencies : [zip, gcrypt, libtorrent, thread_dep], version : '1.0.2', install : true)
 install_headers('include/LibCommunist.h', 'include/NetOperationsComm.h', subdir : 'libcommunist')
-pkg.generate (lib, name : 'libcommunist', version : '1.0.1', subdirs : 'libcommunist')
+pkg.generate (lib, name : 'libcommunist', version : '1.0.2', subdirs : 'libcommunist')
 

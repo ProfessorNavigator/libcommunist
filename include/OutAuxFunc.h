@@ -20,6 +20,7 @@
 
 #include <string>
 #include <array>
+#include <chrono>
 #include <vector>
 #include <tuple>
 #include "AuxFuncNet.h"
