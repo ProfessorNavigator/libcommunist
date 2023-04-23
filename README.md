@@ -12,7 +12,7 @@ You may need to set prefix by -Dprefix= option of meson (default prefix is /usr/
 `DESTDIR=/path/to/your/directory ninja -C build install`
 
 ## Dependencies
-Libcommunist requires following libraries to be installed: [libtorrent-rasterbar](http://libtorrent.org/), [libzip](https://libzip.org/), [libgcrypt](https://www.gnupg.org/software/libgcrypt/index.html).
+Libcommunist requires following libraries to be installed: [libtorrent-rasterbar](http://libtorrent.org/), [libzip](https://libzip.org/), [libgcrypt](https://www.gnupg.org/software/libgcrypt/index.html), [libgpg-error](https://www.gnupg.org/software/libgpg-error/).
 
 ## Usage
 See `Documentation.pdf` file of this repository for detailed description of library API.
