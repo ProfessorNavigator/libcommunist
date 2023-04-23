@@ -17,29 +17,29 @@
 
 #include "MsgSending.h"
 
-MsgSending::MsgSending (NetworkOperations *No)
+MsgSending::MsgSending(NetworkOperations *No)
 {
   no = No;
 }
 
-MsgSending::~MsgSending ()
+MsgSending::~MsgSending()
 {
   // TODO Auto-generated destructor stub
 }
 
 int
-MsgSending::sendMsg (std::filesystem::path pvect, std::array<char, 32> keyarr,
-		     int variant, int sock, uint32_t ip, uint16_t port,
-		     bool relay)
+MsgSending::sendMsg(std::filesystem::path pvect, std::array<char, 32> keyarr,
+		    int variant, int sock, uint32_t ip, uint16_t port,
+		    bool relay)
 {
   int result = 0;
   AuxFuncNet af;
   std::filesystem::path ptos = pvect;
   size_t vind;
-  no->msgpartbufmtx.lock ();
-  auto itmpb = std::find_if (
-      no->msgpartbuf.begin (), no->msgpartbuf.end (), [keyarr, ptos]
-      (auto &el)
+  no->msgpartbufmtx.lock();
+  auto itmpb = std::find_if(
+      no->msgpartbuf.begin(), no->msgpartbuf.end(), [keyarr, ptos]
+      (auto &el) 
 	{
 	  if (std::get<0>(el) == keyarr && std::get<3>(el) == ptos)
 	    {
@@ -50,29 +50,29 @@ MsgSending::sendMsg (std::filesystem::path pvect, std::array<char, 32> keyarr,
 	      return false;
 	    }
 	});
-  if (itmpb == no->msgpartbuf.end ())
+  if(itmpb == no->msgpartbuf.end())
     {
       std::tuple<std::array<char, 32>, uint64_t, int, std::filesystem::path,
 	  int, uint64_t, std::vector<char>> ttup;
-      std::get<0> (ttup) = keyarr;
-      time_t tmt = time (NULL);
-      for (;;)
+      std::get<0>(ttup) = keyarr;
+      time_t tmt = time(NULL);
+      for(;;)
 	{
-	  auto ittmt = std::find_if (no->msgpartbuf.begin (),
-				     no->msgpartbuf.end (), [keyarr, tmt]
-				     (auto &el)
-				       {
-					 if (std::get<0>(el) == keyarr &&
-					     std::get<1>(el) == uint64_t (tmt))
-					   {
-					     return true;
-					   }
-					 else
-					   {
-					     return false;
-					   }
-				       });
-	  if (ittmt != no->msgpartbuf.end ())
+	  auto ittmt = std::find_if(no->msgpartbuf.begin(),
+				    no->msgpartbuf.end(), [keyarr, tmt]
+				    (auto &el) 
+				      {
+					if (std::get<0>(el) == keyarr &&
+					    std::get<1>(el) == uint64_t (tmt))
+					  {
+					    return true;
+					  }
+					else
+					  {
+					    return false;
+					  }
+				      });
+	  if(ittmt != no->msgpartbuf.end())
 	    {
 	      tmt = tmt + 1;
 	    }
@@ -81,474 +81,469 @@ MsgSending::sendMsg (std::filesystem::path pvect, std::array<char, 32> keyarr,
 	      break;
 	    }
 	}
-      std::get<1> (ttup) = uint64_t (tmt);
-      std::get<2> (ttup) = -1;
-      std::get<3> (ttup) = ptos;
-      std::get<4> (ttup) = 0;
-      std::get<5> (ttup) = 0;
-      no->msgpartbuf.push_back (ttup);
-      vind = no->msgpartbuf.size () - 1;
+      std::get<1>(ttup) = uint64_t(tmt);
+      std::get<2>(ttup) = -1;
+      std::get<3>(ttup) = ptos;
+      std::get<4>(ttup) = 0;
+      std::get<5>(ttup) = 0;
+      no->msgpartbuf.push_back(ttup);
+      vind = no->msgpartbuf.size() - 1;
     }
   else
     {
-      vind = std::distance (no->msgpartbuf.begin (), itmpb);
+      vind = std::distance(no->msgpartbuf.begin(), itmpb);
     }
-  int sentstat = std::get<2> (no->msgpartbuf[vind]);
-  int byteread = std::get<4> (no->msgpartbuf[vind]);
-  int fsz = std::filesystem::file_size (ptos);
-  if (sentstat == -1)
+  int sentstat = std::get<2>(no->msgpartbuf[vind]);
+  int byteread = std::get<4>(no->msgpartbuf[vind]);
+  int fsz = std::filesystem::file_size(ptos);
+  if(sentstat == -1)
     {
       std::vector<char> msg;
       std::array<char, 32> okarr;
       std::tuple<lt::dht::public_key, lt::dht::secret_key> okp;
-      okp = lt::dht::ed25519_create_keypair (no->seed);
+      okp = lt::dht::ed25519_create_keypair(no->seed);
       lt::dht::public_key othpk;
       othpk.bytes = keyarr;
-      std::array<char, 32> scalar = lt::dht::ed25519_key_exchange (
-	  othpk, std::get<1> (okp));
-      othpk = lt::dht::ed25519_add_scalar (othpk, scalar);
-      std::string unm = lt::aux::to_hex (keyarr);
-      std::string passwd = lt::aux::to_hex (othpk.bytes);
-      okarr = std::get<0> (okp).bytes;
-      std::copy (okarr.begin (), okarr.end (), std::back_inserter (msg));
+      std::array<char, 32> scalar = lt::dht::ed25519_key_exchange(
+	  othpk, std::get<1>(okp));
+      othpk = lt::dht::ed25519_add_scalar(othpk, scalar);
+      std::string unm = lt::aux::to_hex(keyarr);
+      std::string passwd = lt::aux::to_hex(othpk.bytes);
+      okarr = std::get<0>(okp).bytes;
+      std::copy(okarr.begin(), okarr.end(), std::back_inserter(msg));
       std::string msgtype;
-      if (variant == 1)
+      if(variant == 1)
 	{
 	  msgtype = "PB";
 	}
-      if (variant == 2)
+      if(variant == 2)
 	{
 	  msgtype = "MB";
 	}
 
-      std::copy (msgtype.begin (), msgtype.end (), std::back_inserter (msg));
-      uint64_t tmfb = std::get<1> (no->msgpartbuf[vind]);
-      msg.resize (msg.size () + sizeof(tmfb));
-      std::memcpy (&msg[34], &tmfb, sizeof(tmfb));
-      uint64_t msgn = uint64_t (
-	  std::filesystem::file_size (std::get<3> (no->msgpartbuf[vind])));
-      msg.resize (msg.size () + sizeof(msgn));
-      std::memcpy (&msg[42], &msgn, sizeof(msgn));
-      std::vector<char> fh = af.filehash (std::get<3> (no->msgpartbuf[vind]));
-      std::copy (fh.begin (), fh.end (), std::back_inserter (msg));
-      msg = af.cryptStrm (unm, passwd, msg);
-      time_t curtime = time (NULL);
+      std::copy(msgtype.begin(), msgtype.end(), std::back_inserter(msg));
+      uint64_t tmfb = std::get<1>(no->msgpartbuf[vind]);
+      msg.resize(msg.size() + sizeof(tmfb));
+      std::memcpy(&msg[34], &tmfb, sizeof(tmfb));
+      uint64_t msgn = uint64_t(
+	  std::filesystem::file_size(std::get<3>(no->msgpartbuf[vind])));
+      msg.resize(msg.size() + sizeof(msgn));
+      std::memcpy(&msg[42], &msgn, sizeof(msgn));
+      std::vector<char> fh = af.filehash(std::get<3>(no->msgpartbuf[vind]));
+      std::copy(fh.begin(), fh.end(), std::back_inserter(msg));
+      msg = af.cryptStrm(unm, passwd, msg);
+      time_t curtime = time(NULL);
       int sent = 0;
-      no->ipv6lrmtx.lock ();
-      auto itlr6 = std::find_if (no->ipv6lr.begin (), no->ipv6lr.end (),
-				 [keyarr]
-				 (auto &el)
-				   {
-				     return std::get<0>(el) == keyarr;
-				   });
-      if (itlr6 != no->ipv6lr.end ())
+      no->ipv6lrmtx.lock();
+      auto itlr6 = std::find_if(no->ipv6lr.begin(), no->ipv6lr.end(), [keyarr]
+      (auto &el) 
 	{
-	  if (curtime - std::get<1> (*itlr6) <= no->Tmttear)
+	  return std::get<0>(el) == keyarr;
+	});
+      if(itlr6 != no->ipv6lr.end())
+	{
+	  if(curtime - std::get<1>(*itlr6) <= no->Tmttear)
 	    {
-	      no->ipv6contmtx.lock ();
-	      auto itip6 = std::find_if (no->ipv6cont.begin (),
-					 no->ipv6cont.end (), [keyarr]
-					 (auto &el)
-					   {
-					     return std::get<0>(el) == keyarr;
-					   });
-	      if (itip6 != no->ipv6cont.end ())
+	      no->ipv6contmtx.lock();
+	      auto itip6 = std::find_if(no->ipv6cont.begin(),
+					no->ipv6cont.end(), [keyarr]
+					(auto &el) 
+					  {
+					    return std::get<0>(el) == keyarr;
+					  });
+	      if(itip6 != no->ipv6cont.end())
 		{
-		  std::string ipv6 = std::get<1> (*itip6);
-		  uint16_t port = std::get<2> (*itip6);
-		  no->sockipv6mtx.lock ();
-		  sent = no->sendMsg6 (no->sockipv6, ipv6, port, msg);
-		  no->sockipv6mtx.unlock ();
+		  std::string ipv6 = std::get<1>(*itip6);
+		  uint16_t port = std::get<2>(*itip6);
+		  no->sockipv6mtx.lock();
+		  sent = no->sendMsg6(no->sockipv6, ipv6, port, msg);
+		  no->sockipv6mtx.unlock();
 		  result = 1;
 		}
-	      no->ipv6contmtx.unlock ();
+	      no->ipv6contmtx.unlock();
 	    }
 	}
-      no->ipv6lrmtx.unlock ();
-      if (sent <= 0)
+      no->ipv6lrmtx.unlock();
+      if(sent <= 0)
 	{
-	  if (relay)
+	  if(relay)
 	    {
-	      msgtorelay.push_back (msg);
+	      msgtorelay.push_back(msg);
 	    }
 	  else
 	    {
-	      sent = no->sendMsg (sock, ip, port, msg);
+	      sent = no->sendMsg(sock, ip, port, msg);
 	    }
 	  result = 1;
 	}
     }
   std::vector<char> msgpart;
-  if (sentstat == 0 || sentstat == 2)
+  if(sentstat == 0 || sentstat == 2)
     {
-      if (byteread < fsz)
+      if(byteread < fsz)
 	{
-	  if ((fsz - byteread) > no->Partsize)
+	  if((fsz - byteread) > no->Partsize)
 	    {
-	      msgpart.resize (no->Partsize);
+	      msgpart.resize(no->Partsize);
 	    }
 	  else
 	    {
-	      msgpart.resize (fsz - byteread);
+	      msgpart.resize(fsz - byteread);
 	    }
 
 	  std::fstream f;
-	  f.open (ptos, std::ios_base::in | std::ios_base::binary);
-	  f.seekg (byteread, std::ios_base::beg);
-	  f.read (&msgpart[0], msgpart.size ());
-	  f.close ();
-	  std::get<6> (no->msgpartbuf[vind]) = msgpart;
-	  byteread = byteread + msgpart.size ();
-	  std::get<4> (no->msgpartbuf[vind]) = byteread;
-	  std::get<2> (no->msgpartbuf[vind]) = 1;
-	  if (sentstat == 2)
+	  f.open(ptos, std::ios_base::in | std::ios_base::binary);
+	  f.seekg(byteread, std::ios_base::beg);
+	  f.read(&msgpart[0], msgpart.size());
+	  f.close();
+	  std::get<6>(no->msgpartbuf[vind]) = msgpart;
+	  byteread = byteread + msgpart.size();
+	  std::get<4>(no->msgpartbuf[vind]) = byteread;
+	  std::get<2>(no->msgpartbuf[vind]) = 1;
+	  if(sentstat == 2)
 	    {
-	      std::get<5> (no->msgpartbuf[vind]) = std::get<5> (
+	      std::get<5>(no->msgpartbuf[vind]) = std::get<5>(
 		  no->msgpartbuf[vind]) + 1;
 	    }
 	  sentstat = 1;
 	}
       else
 	{
-	  std::get<2> (no->msgpartbuf[vind]) = 2;
+	  std::get<2>(no->msgpartbuf[vind]) = 2;
 	  sentstat = 2;
 	}
 
     }
 
-  if (sentstat == 1)
+  if(sentstat == 1)
     {
-      msgpart.clear ();
-      msgpart = std::get<6> (no->msgpartbuf[vind]);
-      if (msgpart.size () > 0)
+      msgpart.clear();
+      msgpart = std::get<6>(no->msgpartbuf[vind]);
+      if(msgpart.size() > 0)
 	{
 	  std::vector<char> msg;
 	  std::array<char, 32> okarr;
 	  std::tuple<lt::dht::public_key, lt::dht::secret_key> okp;
-	  okp = lt::dht::ed25519_create_keypair (no->seed);
+	  okp = lt::dht::ed25519_create_keypair(no->seed);
 	  lt::dht::public_key othpk;
 	  othpk.bytes = keyarr;
-	  std::array<char, 32> scalar = lt::dht::ed25519_key_exchange (
-	      othpk, std::get<1> (okp));
-	  othpk = lt::dht::ed25519_add_scalar (othpk, scalar);
-	  std::string unm = lt::aux::to_hex (keyarr);
-	  std::string passwd = lt::aux::to_hex (othpk.bytes);
-	  okarr = std::get<0> (okp).bytes;
-	  std::copy (okarr.begin (), okarr.end (), std::back_inserter (msg));
+	  std::array<char, 32> scalar = lt::dht::ed25519_key_exchange(
+	      othpk, std::get<1>(okp));
+	  othpk = lt::dht::ed25519_add_scalar(othpk, scalar);
+	  std::string unm = lt::aux::to_hex(keyarr);
+	  std::string passwd = lt::aux::to_hex(othpk.bytes);
+	  okarr = std::get<0>(okp).bytes;
+	  std::copy(okarr.begin(), okarr.end(), std::back_inserter(msg));
 	  std::string msgtype;
-	  if (variant == 1)
+	  if(variant == 1)
 	    {
 	      msgtype = "Pb";
 	    }
-	  if (variant == 2)
+	  if(variant == 2)
 	    {
 	      msgtype = "Mb";
 	    }
-	  std::copy (msgtype.begin (), msgtype.end (),
-		     std::back_inserter (msg));
-	  uint64_t tmfb = std::get<1> (no->msgpartbuf[vind]);
-	  msg.resize (msg.size () + sizeof(tmfb));
-	  std::memcpy (&msg[34], &tmfb, sizeof(tmfb));
-	  uint64_t msgn = std::get<5> (no->msgpartbuf[vind]);
-	  msg.resize (msg.size () + sizeof(msgn));
-	  std::memcpy (&msg[42], &msgn, sizeof(msgn));
-	  std::vector<char> fh = af.strhash (msgpart, 2);
-	  std::copy (fh.begin (), fh.end (), std::back_inserter (msg));
-	  msg = af.cryptStrm (unm, passwd, msg);
-	  time_t curtime = time (NULL);
+	  std::copy(msgtype.begin(), msgtype.end(), std::back_inserter(msg));
+	  uint64_t tmfb = std::get<1>(no->msgpartbuf[vind]);
+	  msg.resize(msg.size() + sizeof(tmfb));
+	  std::memcpy(&msg[34], &tmfb, sizeof(tmfb));
+	  uint64_t msgn = std::get<5>(no->msgpartbuf[vind]);
+	  msg.resize(msg.size() + sizeof(msgn));
+	  std::memcpy(&msg[42], &msgn, sizeof(msgn));
+	  std::vector<char> fh = af.strhash(msgpart, 2);
+	  std::copy(fh.begin(), fh.end(), std::back_inserter(msg));
+	  msg = af.cryptStrm(unm, passwd, msg);
+	  time_t curtime = time(NULL);
 	  int sent = 0;
-	  no->ipv6lrmtx.lock ();
-	  auto itlr6 = std::find_if (no->ipv6lr.begin (), no->ipv6lr.end (),
-				     [keyarr]
-				     (auto &el)
-				       {
-					 return std::get<0>(el) == keyarr;
-				       });
-	  if (itlr6 != no->ipv6lr.end ())
+	  no->ipv6lrmtx.lock();
+	  auto itlr6 = std::find_if(no->ipv6lr.begin(), no->ipv6lr.end(),
+				    [keyarr]
+				    (auto &el) 
+				      {
+					return std::get<0>(el) == keyarr;
+				      });
+	  if(itlr6 != no->ipv6lr.end())
 	    {
-	      if (curtime - std::get<1> (*itlr6) <= no->Tmttear)
+	      if(curtime - std::get<1>(*itlr6) <= no->Tmttear)
 		{
-		  no->ipv6contmtx.lock ();
-		  auto itip6 = std::find_if (
-		      no->ipv6cont.begin (), no->ipv6cont.end (), [keyarr]
-		      (auto &el)
+		  no->ipv6contmtx.lock();
+		  auto itip6 = std::find_if(
+		      no->ipv6cont.begin(), no->ipv6cont.end(), [keyarr]
+		      (auto &el) 
 			{
 			  return std::get<0>(el) == keyarr;
 			});
-		  if (itip6 != no->ipv6cont.end ())
+		  if(itip6 != no->ipv6cont.end())
 		    {
-		      std::string ipv6 = std::get<1> (*itip6);
-		      uint16_t port = std::get<2> (*itip6);
-		      no->sockipv6mtx.lock ();
-		      sent = no->sendMsg6 (no->sockipv6, ipv6, port, msg);
-		      no->sockipv6mtx.unlock ();
+		      std::string ipv6 = std::get<1>(*itip6);
+		      uint16_t port = std::get<2>(*itip6);
+		      no->sockipv6mtx.lock();
+		      sent = no->sendMsg6(no->sockipv6, ipv6, port, msg);
+		      no->sockipv6mtx.unlock();
 		      result = 1;
 		    }
-		  no->ipv6contmtx.unlock ();
+		  no->ipv6contmtx.unlock();
 		}
 	    }
-	  no->ipv6lrmtx.unlock ();
-	  if (sent <= 0)
+	  no->ipv6lrmtx.unlock();
+	  if(sent <= 0)
 	    {
-	      if (relay)
+	      if(relay)
 		{
-		  msgtorelay.push_back (msg);
+		  msgtorelay.push_back(msg);
 		}
 	      else
 		{
-		  sent = no->sendMsg (sock, ip, port, msg);
+		  sent = no->sendMsg(sock, ip, port, msg);
 		}
 	      result = 1;
 	    }
 
 	  size_t mcount = 0;
 	  msgn = 0;
-	  for (;;)
+	  for(;;)
 	    {
-	      msg.clear ();
-	      std::copy (okarr.begin (), okarr.end (),
-			 std::back_inserter (msg));
-	      if (variant == 1)
+	      msg.clear();
+	      std::copy(okarr.begin(), okarr.end(), std::back_inserter(msg));
+	      if(variant == 1)
 		{
 		  msgtype = "Pp";
 		}
-	      if (variant == 2)
+	      if(variant == 2)
 		{
 		  msgtype = "Mp";
 		}
-	      std::copy (msgtype.begin (), msgtype.end (),
-			 std::back_inserter (msg));
-	      msg.resize (msg.size () + sizeof(tmfb));
-	      std::memcpy (&msg[34], &tmfb, sizeof(tmfb));
-	      msg.resize (msg.size () + sizeof(msgn));
-	      std::memcpy (&msg[42], &msgn, sizeof(msgn));
-	      if (mcount >= msgpart.size ())
+	      std::copy(msgtype.begin(), msgtype.end(),
+			std::back_inserter(msg));
+	      msg.resize(msg.size() + sizeof(tmfb));
+	      std::memcpy(&msg[34], &tmfb, sizeof(tmfb));
+	      msg.resize(msg.size() + sizeof(msgn));
+	      std::memcpy(&msg[42], &msgn, sizeof(msgn));
+	      if(mcount >= msgpart.size())
 		{
 		  break;
 		}
 
-	      if (msgpart.size () - mcount >= 457)
+	      if(msgpart.size() - mcount >= 457)
 		{
-		  std::copy (msgpart.begin () + mcount,
-			     msgpart.begin () + mcount + 457,
-			     std::back_inserter (msg));
+		  std::copy(msgpart.begin() + mcount,
+			    msgpart.begin() + mcount + 457,
+			    std::back_inserter(msg));
 		  mcount = mcount + 457;
 		}
 	      else
 		{
-		  std::copy (msgpart.begin () + mcount, msgpart.end (),
-			     std::back_inserter (msg));
-		  mcount = msgpart.size ();
+		  std::copy(msgpart.begin() + mcount, msgpart.end(),
+			    std::back_inserter(msg));
+		  mcount = msgpart.size();
 		}
-	      msg = af.cryptStrm (unm, passwd, msg);
+	      msg = af.cryptStrm(unm, passwd, msg);
 	      sent = 0;
-	      no->ipv6lrmtx.lock ();
-	      itlr6 = std::find_if (no->ipv6lr.begin (), no->ipv6lr.end (),
-				    [keyarr]
-				    (auto &el)
-				      {
-					return std::get<0>(el) == keyarr;
-				      });
-	      if (itlr6 != no->ipv6lr.end ())
+	      no->ipv6lrmtx.lock();
+	      itlr6 = std::find_if(no->ipv6lr.begin(), no->ipv6lr.end(),
+				   [keyarr]
+				   (auto &el) 
+				     {
+				       return std::get<0>(el) == keyarr;
+				     });
+	      if(itlr6 != no->ipv6lr.end())
 		{
-		  if (curtime - std::get<1> (*itlr6) <= no->Tmttear)
+		  if(curtime - std::get<1>(*itlr6) <= no->Tmttear)
 		    {
-		      no->ipv6contmtx.lock ();
-		      auto itip6 = std::find_if (
-			  no->ipv6cont.begin (), no->ipv6cont.end (), [keyarr]
-			  (auto &el)
+		      no->ipv6contmtx.lock();
+		      auto itip6 = std::find_if(
+			  no->ipv6cont.begin(), no->ipv6cont.end(), [keyarr]
+			  (auto &el) 
 			    {
 			      return std::get<0>(el) == keyarr;
 			    });
-		      if (itip6 != no->ipv6cont.end ())
+		      if(itip6 != no->ipv6cont.end())
 			{
-			  std::string ipv6 = std::get<1> (*itip6);
-			  uint16_t port = std::get<2> (*itip6);
-			  no->sockipv6mtx.lock ();
-			  sent = no->sendMsg6 (no->sockipv6, ipv6, port, msg);
-			  no->sockipv6mtx.unlock ();
+			  std::string ipv6 = std::get<1>(*itip6);
+			  uint16_t port = std::get<2>(*itip6);
+			  no->sockipv6mtx.lock();
+			  sent = no->sendMsg6(no->sockipv6, ipv6, port, msg);
+			  no->sockipv6mtx.unlock();
 			  result = 1;
 			}
-		      no->ipv6contmtx.unlock ();
+		      no->ipv6contmtx.unlock();
 		    }
 		}
-	      no->ipv6lrmtx.unlock ();
-	      if (sent <= 0)
+	      no->ipv6lrmtx.unlock();
+	      if(sent <= 0)
 		{
-		  if (relay)
+		  if(relay)
 		    {
-		      msgtorelay.push_back (msg);
+		      msgtorelay.push_back(msg);
 		    }
 		  else
 		    {
-		      sent = no->sendMsg (sock, ip, port, msg);
+		      sent = no->sendMsg(sock, ip, port, msg);
 		    }
 		  result = 1;
 		}
 
 	      msgn = msgn + 1;
 	    }
-	  msg.clear ();
-	  std::copy (okarr.begin (), okarr.end (), std::back_inserter (msg));
-	  if (variant == 1)
+	  msg.clear();
+	  std::copy(okarr.begin(), okarr.end(), std::back_inserter(msg));
+	  if(variant == 1)
 	    {
 	      msgtype = "Pe";
 	    }
-	  if (variant == 2)
+	  if(variant == 2)
 	    {
 	      msgtype = "Me";
 	    }
-	  std::copy (msgtype.begin (), msgtype.end (),
-		     std::back_inserter (msg));
-	  msg.resize (msg.size () + sizeof(tmfb));
-	  std::memcpy (&msg[34], &tmfb, sizeof(tmfb));
-	  msgn = std::get<5> (no->msgpartbuf[vind]);
-	  msg.resize (msg.size () + sizeof(msgn));
-	  std::memcpy (&msg[42], &msgn, sizeof(msgn));
-	  msg = af.cryptStrm (unm, passwd, msg);
+	  std::copy(msgtype.begin(), msgtype.end(), std::back_inserter(msg));
+	  msg.resize(msg.size() + sizeof(tmfb));
+	  std::memcpy(&msg[34], &tmfb, sizeof(tmfb));
+	  msgn = std::get<5>(no->msgpartbuf[vind]);
+	  msg.resize(msg.size() + sizeof(msgn));
+	  std::memcpy(&msg[42], &msgn, sizeof(msgn));
+	  msg = af.cryptStrm(unm, passwd, msg);
 	  sent = 0;
-	  no->ipv6lrmtx.lock ();
-	  itlr6 = std::find_if (no->ipv6lr.begin (), no->ipv6lr.end (), [keyarr]
-	  (auto &el)
+	  no->ipv6lrmtx.lock();
+	  itlr6 = std::find_if(no->ipv6lr.begin(), no->ipv6lr.end(), [keyarr]
+	  (auto &el) 
 	    {
 	      return std::get<0>(el) == keyarr;
 	    });
-	  if (itlr6 != no->ipv6lr.end ())
+	  if(itlr6 != no->ipv6lr.end())
 	    {
-	      if (curtime - std::get<1> (*itlr6) <= no->Tmttear)
+	      if(curtime - std::get<1>(*itlr6) <= no->Tmttear)
 		{
-		  no->ipv6contmtx.lock ();
-		  auto itip6 = std::find_if (
-		      no->ipv6cont.begin (), no->ipv6cont.end (), [keyarr]
-		      (auto &el)
+		  no->ipv6contmtx.lock();
+		  auto itip6 = std::find_if(
+		      no->ipv6cont.begin(), no->ipv6cont.end(), [keyarr]
+		      (auto &el) 
 			{
 			  return std::get<0>(el) == keyarr;
 			});
-		  if (itip6 != no->ipv6cont.end ())
+		  if(itip6 != no->ipv6cont.end())
 		    {
-		      std::string ipv6 = std::get<1> (*itip6);
-		      uint16_t port = std::get<2> (*itip6);
-		      no->sockipv6mtx.lock ();
-		      sent = no->sendMsg6 (no->sockipv6, ipv6, port, msg);
-		      no->sockipv6mtx.unlock ();
+		      std::string ipv6 = std::get<1>(*itip6);
+		      uint16_t port = std::get<2>(*itip6);
+		      no->sockipv6mtx.lock();
+		      sent = no->sendMsg6(no->sockipv6, ipv6, port, msg);
+		      no->sockipv6mtx.unlock();
 		      result = 1;
 		    }
-		  no->ipv6contmtx.unlock ();
+		  no->ipv6contmtx.unlock();
 		}
 	    }
-	  no->ipv6lrmtx.unlock ();
-	  if (sent <= 0)
+	  no->ipv6lrmtx.unlock();
+	  if(sent <= 0)
 	    {
-	      if (relay)
+	      if(relay)
 		{
-		  msgtorelay.push_back (msg);
+		  msgtorelay.push_back(msg);
 		}
 	      else
 		{
-		  sent = no->sendMsg (sock, ip, port, msg);
+		  sent = no->sendMsg(sock, ip, port, msg);
 		}
 	      result = 1;
 	    }
-	  std::get<2> (no->msgpartbuf[vind]) = 1;
+	  std::get<2>(no->msgpartbuf[vind]) = 1;
 	}
     }
-  if (byteread >= fsz && sentstat == 2)
+  if(byteread >= fsz && sentstat == 2)
     {
       std::vector<char> msg;
       std::array<char, 32> okarr;
       std::tuple<lt::dht::public_key, lt::dht::secret_key> okp;
-      okp = lt::dht::ed25519_create_keypair (no->seed);
+      okp = lt::dht::ed25519_create_keypair(no->seed);
       lt::dht::public_key othpk;
       othpk.bytes = keyarr;
-      std::array<char, 32> scalar = lt::dht::ed25519_key_exchange (
-	  othpk, std::get<1> (okp));
-      othpk = lt::dht::ed25519_add_scalar (othpk, scalar);
-      std::string unm = lt::aux::to_hex (keyarr);
-      std::string passwd = lt::aux::to_hex (othpk.bytes);
-      okarr = std::get<0> (okp).bytes;
-      std::copy (okarr.begin (), okarr.end (), std::back_inserter (msg));
+      std::array<char, 32> scalar = lt::dht::ed25519_key_exchange(
+	  othpk, std::get<1>(okp));
+      othpk = lt::dht::ed25519_add_scalar(othpk, scalar);
+      std::string unm = lt::aux::to_hex(keyarr);
+      std::string passwd = lt::aux::to_hex(othpk.bytes);
+      okarr = std::get<0>(okp).bytes;
+      std::copy(okarr.begin(), okarr.end(), std::back_inserter(msg));
       std::string msgtype;
-      if (variant == 1)
+      if(variant == 1)
 	{
 	  msgtype = "PE";
 	}
-      if (variant == 2)
+      if(variant == 2)
 	{
 	  msgtype = "ME";
 	}
-      std::copy (msgtype.begin (), msgtype.end (), std::back_inserter (msg));
-      uint64_t tmfb = std::get<1> (no->msgpartbuf[vind]);
-      msg.resize (msg.size () + sizeof(tmfb));
-      std::memcpy (&msg[34], &tmfb, sizeof(tmfb));
+      std::copy(msgtype.begin(), msgtype.end(), std::back_inserter(msg));
+      uint64_t tmfb = std::get<1>(no->msgpartbuf[vind]);
+      msg.resize(msg.size() + sizeof(tmfb));
+      std::memcpy(&msg[34], &tmfb, sizeof(tmfb));
       uint64_t msgn = 0;
-      msg.resize (msg.size () + sizeof(msgn));
-      std::memcpy (&msg[42], &msgn, sizeof(msgn));
-      msg = af.cryptStrm (unm, passwd, msg);
-      time_t curtime = time (NULL);
+      msg.resize(msg.size() + sizeof(msgn));
+      std::memcpy(&msg[42], &msgn, sizeof(msgn));
+      msg = af.cryptStrm(unm, passwd, msg);
+      time_t curtime = time(NULL);
       int sent = 0;
-      no->ipv6lrmtx.lock ();
-      auto itlr6 = std::find_if (no->ipv6lr.begin (), no->ipv6lr.end (),
-				 [keyarr]
-				 (auto &el)
-				   {
-				     return std::get<0>(el) == keyarr;
-				   });
-      if (itlr6 != no->ipv6lr.end ())
+      no->ipv6lrmtx.lock();
+      auto itlr6 = std::find_if(no->ipv6lr.begin(), no->ipv6lr.end(), [keyarr]
+      (auto &el) 
 	{
-	  if (curtime - std::get<1> (*itlr6) <= no->Tmttear)
+	  return std::get<0>(el) == keyarr;
+	});
+      if(itlr6 != no->ipv6lr.end())
+	{
+	  if(curtime - std::get<1>(*itlr6) <= no->Tmttear)
 	    {
-	      no->ipv6contmtx.lock ();
-	      auto itip6 = std::find_if (no->ipv6cont.begin (),
-					 no->ipv6cont.end (), [keyarr]
-					 (auto &el)
-					   {
-					     return std::get<0>(el) == keyarr;
-					   });
-	      if (itip6 != no->ipv6cont.end ())
+	      no->ipv6contmtx.lock();
+	      auto itip6 = std::find_if(no->ipv6cont.begin(),
+					no->ipv6cont.end(), [keyarr]
+					(auto &el) 
+					  {
+					    return std::get<0>(el) == keyarr;
+					  });
+	      if(itip6 != no->ipv6cont.end())
 		{
-		  std::string ipv6 = std::get<1> (*itip6);
-		  uint16_t port = std::get<2> (*itip6);
-		  no->sockipv6mtx.lock ();
-		  sent = no->sendMsg6 (no->sockipv6, ipv6, port, msg);
-		  no->sockipv6mtx.unlock ();
+		  std::string ipv6 = std::get<1>(*itip6);
+		  uint16_t port = std::get<2>(*itip6);
+		  no->sockipv6mtx.lock();
+		  sent = no->sendMsg6(no->sockipv6, ipv6, port, msg);
+		  no->sockipv6mtx.unlock();
 		  result = 1;
 		}
-	      no->ipv6contmtx.unlock ();
+	      no->ipv6contmtx.unlock();
 	    }
 	}
-      no->ipv6lrmtx.unlock ();
-      if (sent <= 0)
+      no->ipv6lrmtx.unlock();
+      if(sent <= 0)
 	{
-	  if (relay)
+	  if(relay)
 	    {
-	      msgtorelay.push_back (msg);
+	      msgtorelay.push_back(msg);
 	    }
 	  else
 	    {
-	      sent = no->sendMsg (sock, ip, port, msg);
+	      sent = no->sendMsg(sock, ip, port, msg);
 	    }
 	  result = 1;
 	}
     }
 
-  no->msgpartbufmtx.unlock ();
-  if (msgtorelay.size () > 0)
+  no->msgpartbufmtx.unlock();
+  if(msgtorelay.size() > 0)
     {
       std::mutex *mtx = new std::mutex;
-      mtx->lock ();
-      no->threadvectmtx.lock ();
-      no->threadvect.push_back (std::make_tuple (mtx, "MsgSending relay"));
-      no->threadvectmtx.unlock ();
+      mtx->lock();
+      no->threadvectmtx.lock();
+      no->threadvect.push_back(std::make_tuple(mtx, "MsgSending relay"));
+      no->threadvectmtx.unlock();
       std::vector<std::vector<char>> *tvect = new std::vector<std::vector<char>>;
       *tvect = msgtorelay;
       NetworkOperations *nop = no;
-      std::thread *thr = new std::thread ( [keyarr, mtx, tvect, nop]
+      std::thread *thr = new std::thread([keyarr, mtx, tvect, nop]
       {
-	nop->ROp->relaySend (keyarr, nop->seed, *tvect);
+	nop->ROp->relaySend(keyarr, nop->seed, *tvect);
 	delete tvect;
-	mtx->unlock ();
+	mtx->unlock();
       });
-      thr->detach ();
+      thr->detach();
       delete thr;
     }
 

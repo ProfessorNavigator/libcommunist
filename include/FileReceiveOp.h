@@ -30,66 +30,66 @@ class NetworkOperations;
 class FileReceiveOp
 {
 public:
-  FileReceiveOp (NetworkOperations *No);
+  FileReceiveOp(NetworkOperations *No);
   virtual
-  ~FileReceiveOp ();
+  ~FileReceiveOp();
   void
-  fileProcessing (std::string msgtype, std::array<char, 32> keyarr,
-		  int ip6check, int sockipv, sockaddr_in *from,
-		  sockaddr_in6 *from6, bool relay);
+  fileProcessing(std::string msgtype, std::array<char, 32> keyarr, int ip6check,
+		 int sockipv, sockaddr_in *from, sockaddr_in6 *from6,
+		 bool relay);
   void
-  fileFQ (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFQ(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
   void
-  fileFJ (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFJ(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
   void
-  fileFA (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFA(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
   void
-  fileFr (std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
-	  sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
-	  std::vector<char> &buf, bool relay);
+  fileFr(std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
+	 sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
+	 std::vector<char> &buf, bool relay);
   void
-  fileFRFI (std::string msgtype, std::array<char, 32> keyarr,
-	    std::vector<char> &buf);
+  fileFRFI(std::string msgtype, std::array<char, 32> keyarr,
+	   std::vector<char> &buf);
   void
-  fileFB (std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
-	  sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
-	  std::vector<char> &buf, bool relay);
+  fileFB(std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
+	 sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
+	 std::vector<char> &buf, bool relay);
   void
-  fileFH (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFH(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
   void
-  fileFb (std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
-	  sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
-	  std::vector<char> &buf, bool relay);
+  fileFb(std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
+	 sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
+	 std::vector<char> &buf, bool relay);
   void
-  fileFp (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFp(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
   void
-  fileFe (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFe(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
   void
-  fileFE (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFE(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
   void
-  fileFF (std::string msgtype, std::array<char, 32> keyarr,
-	  std::vector<char> &buf);
+  fileFF(std::string msgtype, std::array<char, 32> keyarr,
+	 std::vector<char> &buf);
 private:
   void
-  filePrFp (std::array<char, 32> key, int rcvip6, bool relay, int sockipv,
-	    sockaddr_in *from, sockaddr_in6 *from6);
-  void
-  filePrFe (std::array<char, 32> key, int rcvip6, bool relay, int sockipv,
-	    sockaddr_in *from, sockaddr_in6 *from6);
-  void
-  filePrFE (std::array<char, 32> key, int rcvip6, bool relay, int sockipv,
-	    sockaddr_in *from, sockaddr_in6 *from6, std::string index);
-  void
-  sendMsg (std::array<char, 32> key, std::string mtype, uint64_t tint,
-	   uint64_t numb, int rcvip6, bool relay, int sockipv,
+  filePrFp(std::array<char, 32> key, int rcvip6, bool relay, int sockipv,
 	   sockaddr_in *from, sockaddr_in6 *from6);
+  void
+  filePrFe(std::array<char, 32> key, int rcvip6, bool relay, int sockipv,
+	   sockaddr_in *from, sockaddr_in6 *from6);
+  void
+  filePrFE(std::array<char, 32> key, int rcvip6, bool relay, int sockipv,
+	   sockaddr_in *from, sockaddr_in6 *from6, std::string index);
+  void
+  sendMsg(std::array<char, 32> key, std::string mtype, uint64_t tint,
+	  uint64_t numb, int rcvip6, bool relay, int sockipv, sockaddr_in *from,
+	  sockaddr_in6 *from6);
 
   NetworkOperations *no = nullptr;
 };

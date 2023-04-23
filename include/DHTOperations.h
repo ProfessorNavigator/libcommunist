@@ -36,50 +36,49 @@ class NetworkOperations;
 class DHTOperations
 {
 public:
-  DHTOperations (NetworkOperations *No);
+  DHTOperations(NetworkOperations *No);
   virtual
-  ~DHTOperations ();
+  ~DHTOperations();
   void
-  processDHT ();
+  processDHT();
 private:
   std::vector<std::array<char, 32>>
-  getFrVect ();
+  getFrVect();
 
   std::vector<std::tuple<std::array<char, 32>, uint32_t, uint16_t>>
-  putVect ();
+  putVect();
 
   std::array<char, 32>
-  getSes (std::array<char, 32> key, lt::session *ses, bool relay);
+  getSes(std::array<char, 32> key, lt::session *ses, bool relay);
 
   std::array<char, 32>
-  getSes6 (std::array<char, 32> key, lt::session *ses);
+  getSes6(std::array<char, 32> key, lt::session *ses);
 
   std::array<char, 32>
-  putSes (std::array<char, 32> otherkey, uint32_t ip, uint16_t port,
-	  lt::session *ses, bool relay);
+  putSes(std::array<char, 32> otherkey, uint32_t ip, uint16_t port,
+	 lt::session *ses, bool relay);
 
   std::array<char, 32>
-  putSes6 (std::array<char, 32> otherkey, lt::session *ses);
+  putSes6(std::array<char, 32> otherkey, lt::session *ses);
 
   void
-  getvResult (std::array<char, 32> key, uint32_t ip, uint16_t port, int seq);
+  getvResult(std::array<char, 32> key, uint32_t ip, uint16_t port, int seq);
 
   void
-  getvResult6 (std::array<char, 32> key, std::string ip, uint16_t port,
-	       int seq);
+  getvResult6(std::array<char, 32> key, std::string ip, uint16_t port, int seq);
 
   void
-  dhtThread (std::mutex *thrmtx);
+  dhtThread(std::mutex *thrmtx);
 
   void
-  rcvRelay (
+  rcvRelay(
       std::array<char, 32> key,
       int64_t seq,
       std::string msg,
       std::vector<std::tuple<std::array<char, 32>, std::array<char, 32>>> &getvinner);
 
   void
-  formRelayPut (
+  formRelayPut(
       std::vector<std::tuple<std::array<char, 32>, time_t, time_t>> *relayputinner);
   NetworkOperations *no = nullptr;
 };

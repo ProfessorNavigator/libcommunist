@@ -31,13 +31,13 @@ class NetworkOpearations;
 class FileSending
 {
 public:
-  FileSending (NetworkOperations *No);
+  FileSending(NetworkOperations *No);
   virtual
-  ~FileSending ();
+  ~FileSending();
   int
-  fileSending (std::filesystem::path pvect, std::array<char, 32> keyarr,
-	       int variant, int sock, uint32_t ip, uint16_t port,
-	       int *totalsent, bool relay);
+  fileSending(std::filesystem::path pvect, std::array<char, 32> keyarr,
+	      int variant, int sock, uint32_t ip, uint16_t port, int *totalsent,
+	      bool relay);
 private:
   NetworkOperations *no = nullptr;
   std::vector<std::vector<char>> filerelsending;

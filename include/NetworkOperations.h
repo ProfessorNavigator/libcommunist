@@ -75,14 +75,14 @@ class NetworkOperations
   friend class MsgSending;
   friend class FileSending;
 public:
-  NetworkOperations (
-      std::string username, std::string password,
-      std::vector<std::tuple<int, std::string>> &Contacts,
-      std::array<char, 32> &Seed, std::vector<std::string> &addfriends,
-      std::vector<std::tuple<std::string, std::string>> &Prefvect,
-      std::string sharepath, std::string homepath);
+  NetworkOperations(std::string username, std::string password,
+		    std::vector<std::tuple<int, std::string>> &Contacts,
+		    std::array<char, 32> &Seed,
+		    std::vector<std::string> &addfriends,
+		    std::vector<std::tuple<std::string, std::string>> &Prefvect,
+		    std::string sharepath, std::string homepath);
   virtual
-  ~NetworkOperations ();
+  ~NetworkOperations();
   std::function<void
   ()> canceled;
   std::function<void
@@ -124,98 +124,98 @@ public:
   std::function<void
   ()> friendBlockedSig;
   void
-  mainFunc ();
+  mainFunc();
   void
-  getNewFriends (std::string key);
+  getNewFriends(std::string key);
   void
-  removeFriend (std::string key);
+  removeFriend(std::string key);
   bool
-  checkIfMsgSent (std::filesystem::path p);
+  checkIfMsgSent(std::filesystem::path p);
   std::filesystem::path
-  createMsg (std::string key, std::filesystem::path p, int type);
+  createMsg(std::string key, std::filesystem::path p, int type);
   void
-  renewProfile (std::string key);
+  renewProfile(std::string key);
   void
-  fileReject (std::string key, uint64_t tm);
+  fileReject(std::string key, uint64_t tm);
   void
-  fileAccept (std::string key, uint64_t tm, std::filesystem::path sp, bool fa);
+  fileAccept(std::string key, uint64_t tm, std::filesystem::path sp, bool fa);
   void
-  startFriend (std::string key, int ind);
+  startFriend(std::string key, int ind);
   void
-  blockFriend (std::string key);
+  blockFriend(std::string key);
   void
-  setIPv6 (std::string ip);
+  setIPv6(std::string ip);
   void
-  setIPv4 (std::string ip);
+  setIPv4(std::string ip);
   std::filesystem::path
-  removeMsg (std::string key, std::filesystem::path msgpath);
+  removeMsg(std::string key, std::filesystem::path msgpath);
   void
-  cancelAll ();
+  cancelAll();
   void
-  cancelSendF (std::string key, std::filesystem::path filepath);
+  cancelSendF(std::string key, std::filesystem::path filepath);
   void
-  cancelReceivF (std::string key, std::filesystem::path filepath);
+  cancelReceivF(std::string key, std::filesystem::path filepath);
   void
-  editContByRelay (std::vector<std::string> &sendbyrel);
+  editContByRelay(std::vector<std::string> &sendbyrel);
   std::filesystem::path
-  formMsg (std::string key, std::string nick, std::string replstr,
-	   std::filesystem::path msgpath, int type);
+  formMsg(std::string key, std::string nick, std::string replstr,
+	  std::filesystem::path msgpath, int type);
   std::filesystem::path
-  formMsg (std::string key, std::string nick, std::string replstr,
-	   std::string msgstring, int type);
+  formMsg(std::string key, std::string nick, std::string replstr,
+	  std::string msgstring, int type);
 
 private:
   std::function<void
   ()> dnsfinished;
   void
-  dnsFunc ();
+  dnsFunc();
   void
-  putOwnIps (std::array<char, 32> otherkey, uint32_t ip, uint16_t port);
+  putOwnIps(std::array<char, 32> otherkey, uint32_t ip, uint16_t port);
   std::pair<uint32_t, uint16_t>
-  getOwnIps (int udpsock, std::pair<struct in_addr, int> stunsv);
+  getOwnIps(int udpsock, std::pair<struct in_addr, int> stunsv);
   void
-  holePunchThr (size_t i, time_t curtime, int sock, uint32_t ip,
-		std::mutex *thrmtx);
+  holePunchThr(size_t i, time_t curtime, int sock, uint32_t ip,
+	       std::mutex *thrmtx);
   void
-  holePunch (int sock, uint32_t ip, std::array<char, 32> otherkey);
+  holePunch(int sock, uint32_t ip, std::array<char, 32> otherkey);
   int
-  receiveMsg (int sockipv4, sockaddr_in *from, std::string relaykey,
-	      std::vector<char> *relaymsg);
+  receiveMsg(int sockipv4, sockaddr_in *from, std::string relaykey,
+	     std::vector<char> *relaymsg);
   void
-  receivePoll ();
+  receivePoll();
   int
-  sendMsg (int sockipv4, uint32_t ip, uint16_t port, std::vector<char> &msg);
+  sendMsg(int sockipv4, uint32_t ip, uint16_t port, std::vector<char> &msg);
   int
-  sendMsg6 (int sock, std::string ip6, uint16_t port, std::vector<char> &msg);
+  sendMsg6(int sock, std::string ip6, uint16_t port, std::vector<char> &msg);
   int
-  sendMsgGlob (int sock, std::array<char, 32> keytos, uint32_t ip,
-	       uint16_t port);
+  sendMsgGlob(int sock, std::array<char, 32> keytos, uint32_t ip,
+	      uint16_t port);
   void
-  commOps ();
+  commOps();
   void
-  stunSrv ();
+  stunSrv();
   void
-  stunSrvThread (std::mutex *thrmtx, int stnsrvsock);
+  stunSrvThread(std::mutex *thrmtx, int stnsrvsock);
   void
-  stunCheckThread (std::mutex *thrmtx, int stnsock);
+  stunCheckThread(std::mutex *thrmtx, int stnsock);
   void
-  dnsFinishedThread (std::mutex *thrmtx);
+  dnsFinishedThread(std::mutex *thrmtx);
   void
-  getOwnIpsThread (
+  getOwnIpsThread(
       std::mutex *thrmtx,
       std::vector<std::tuple<std::array<char, 32>, uint32_t, uint16_t, time_t>> *ownips,
       std::mutex *ownipsmtx);
   void
-  getFriendIpsThread (
+  getFriendIpsThread(
       std::vector<std::tuple<std::array<char, 32>, time_t>> *blockip,
       std::mutex *blockipmtx, std::mutex *thrmtx);
   void
-  receiveMsgThread (int sock, std::mutex *thrmtx);
+  receiveMsgThread(int sock, std::mutex *thrmtx);
   void
-  sendMsgThread (std::mutex *sendingthrmtx,
-		 std::vector<std::array<char, 32>> *sendingthr,
-		 std::array<char, 32> key, std::mutex *mtx, int sock,
-		 std::mutex *thrmtxsm);
+  sendMsgThread(std::mutex *sendingthrmtx,
+		std::vector<std::array<char, 32>> *sendingthr,
+		std::array<char, 32> key, std::mutex *mtx, int sock,
+		std::mutex *thrmtxsm);
 #ifdef _WIN32
   int
   poll (struct pollfd *pfd, int nfds, int timeout);

@@ -28,75 +28,73 @@
 class OutAuxFunc
 {
 public:
-  OutAuxFunc ();
+  OutAuxFunc();
   virtual
-  ~OutAuxFunc ();
+  ~OutAuxFunc();
   std::array<char, 32>
-  seedGenerate ();
+  seedGenerate();
   std::string
-  getKeyFmSeed (std::array<char, 32> &seed);
+  getKeyFmSeed(std::array<char, 32> &seed);
   std::string
-  getSecreteKeyFmSeed (std::array<char, 32> &seed);
+  getSecreteKeyFmSeed(std::array<char, 32> &seed);
   std::string
-  genPasswd (std::string key, std::array<char, 32> &seed);
+  genPasswd(std::string key, std::array<char, 32> &seed);
   std::string
-  genFriendPasswd (std::string key, std::array<char, 32> &seed);
+  genFriendPasswd(std::string key, std::array<char, 32> &seed);
   int
-  createProfile (std::string Username, std::string Password,
-		 std::string homepath,
-		 std::vector<std::tuple<std::string, std::string>> &profvect,
-		 std::array<char, 32> &seed);
+  createProfile(std::string Username, std::string Password,
+		std::string homepath,
+		std::vector<std::tuple<std::string, std::string>> &profvect,
+		std::array<char, 32> &seed);
   int
-  openProfile (std::string homepath, std::string Username, std::string Password,
-	       std::string outfoldername);
+  openProfile(std::string homepath, std::string Username, std::string Password,
+	      std::string outfoldername);
   int
-  editProfile (
-      std::string Username, std::string Password, std::string homepath,
-      std::vector<std::tuple<std::string, std::vector<char>>> &profvect,
-      std::array<char, 32> &seed,
-      std::vector<std::tuple<int, std::string>> &contacts,
-      std::vector<std::string> &Addfriends,
-      std::vector<std::string> &relaycontlist);
+  editProfile(std::string Username, std::string Password, std::string homepath,
+	      std::vector<std::tuple<std::string, std::vector<char>>> &profvect,
+	      std::array<char, 32> &seed,
+	      std::vector<std::tuple<int, std::string>> &contacts,
+	      std::vector<std::string> &Addfriends,
+	      std::vector<std::string> &relaycontlist);
   std::vector<std::tuple<int, std::string>>
-  readContacts (std::string homepath, std::string Username,
-		std::string Password);
-  std::vector<std::string>
-  readRequestList (std::string homepath, std::string Username,
-		   std::string Password);
-  std::string
-  getContactMsgLog (std::string homepath, std::string Username,
-		    std::string Password, int contind,
-		    std::string outfolderpath);
-  int
-  openFriendProfile (std::string homepath, std::array<char, 32> &seed,
-		     std::string friendkey, int ind, std::string outfoldername);
-  void
-  msgAutoRemove (std::string homepath, std::string Username,
-		 std::string Password, std::string mode);
-  std::vector<std::tuple<std::string, std::vector<char>>>
-  readProfile (std::string homepath, std::string Username,
+  readContacts(std::string homepath, std::string Username,
 	       std::string Password);
-  std::vector<std::tuple<std::string, std::vector<char>>>
-  readFriendProfile (std::string homepath, std::array<char, 32> &seed,
-		     std::string friendkey,
-		     std::vector<std::tuple<int, std::string>> &contacts);
-  int
-  readSeed (std::string homepath, std::string Username, std::string Password,
-	    std::array<char, 32> &seed);
-  std::string
-  openFriendMsg (std::filesystem::path msgpath, std::string friendkey,
-		 std::array<char, 32> &seed);
-  std::string
-  openOwnMsg (std::filesystem::path msgpath, std::string friendkey,
-	      std::array<char, 32> &seed);
-  std::vector<std::filesystem::path>
-  listMessages (std::string homepath, std::string key,
-		std::vector<std::tuple<int, std::string>> &contacts);
   std::vector<std::string>
-  readRelayContacts (std::string homepath, std::string Username,
-		     std::string Password);
+  readRequestList(std::string homepath, std::string Username,
+		  std::string Password);
   std::string
-  randomFileName ();
+  getContactMsgLog(std::string homepath, std::string Username,
+		   std::string Password, int contind,
+		   std::string outfolderpath);
+  int
+  openFriendProfile(std::string homepath, std::array<char, 32> &seed,
+		    std::string friendkey, int ind, std::string outfoldername);
+  void
+  msgAutoRemove(std::string homepath, std::string Username,
+		std::string Password, std::string mode);
+  std::vector<std::tuple<std::string, std::vector<char>>>
+  readProfile(std::string homepath, std::string Username, std::string Password);
+  std::vector<std::tuple<std::string, std::vector<char>>>
+  readFriendProfile(std::string homepath, std::array<char, 32> &seed,
+		    std::string friendkey,
+		    std::vector<std::tuple<int, std::string>> &contacts);
+  int
+  readSeed(std::string homepath, std::string Username, std::string Password,
+	   std::array<char, 32> &seed);
+  std::string
+  openFriendMsg(std::filesystem::path msgpath, std::string friendkey,
+		std::array<char, 32> &seed);
+  std::string
+  openOwnMsg(std::filesystem::path msgpath, std::string friendkey,
+	     std::array<char, 32> &seed);
+  std::vector<std::filesystem::path>
+  listMessages(std::string homepath, std::string key,
+	       std::vector<std::tuple<int, std::string>> &contacts);
+  std::vector<std::string>
+  readRelayContacts(std::string homepath, std::string Username,
+		    std::string Password);
+  std::string
+  randomFileName();
 };
 
 #endif /* INCLUDE_OUTAUXFUNC_H_ */

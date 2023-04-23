@@ -30,12 +30,12 @@ class NetworkOperations;
 class LocalNetworkOp
 {
 public:
-  LocalNetworkOp (NetworkOperations *No);
+  LocalNetworkOp(NetworkOperations *No);
   virtual
-  ~LocalNetworkOp ();
+  ~LocalNetworkOp();
 private:
   void
-  bootstrFunc ();
+  bootstrFunc();
   NetworkOperations *no = nullptr;
 };
 

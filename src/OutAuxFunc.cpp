@@ -114,7 +114,7 @@ OutAuxFunc::createProfile(
   f.open(filepath, std::ios_base::out | std::ios_base::binary);
   std::string line;
   auto itprv = std::find_if(profvect.begin(), profvect.end(), []
-  (auto &el)
+  (auto &el) 
     {
       return std::get<0>(el) == "Nick";
     });
@@ -136,7 +136,7 @@ OutAuxFunc::createProfile(
       return -1;
     }
   itprv = std::find_if(profvect.begin(), profvect.end(), []
-  (auto &el)
+  (auto &el) 
     {
       return std::get<0>(el) == "Name";
     });
@@ -150,7 +150,7 @@ OutAuxFunc::createProfile(
 	}
     }
   itprv = std::find_if(profvect.begin(), profvect.end(), []
-  (auto &el)
+  (auto &el) 
     {
       return std::get<0>(el) == "Surname";
     });
@@ -171,7 +171,7 @@ OutAuxFunc::createProfile(
   f.write(seed.data(), seed.size());
   f.close();
   itprv = std::find_if(profvect.begin(), profvect.end(), []
-  (auto &el)
+  (auto &el) 
     {
       return std::get<0>(el) == "Avatar";
     });
@@ -294,7 +294,7 @@ OutAuxFunc::editProfile(
   if(f.is_open())
     {
       auto itprv = std::find_if(profvect.begin(), profvect.end(), []
-      (auto &el)
+      (auto &el) 
 	{
 	  return std::get<0>(el) == "Nick";
 	});
@@ -319,7 +319,7 @@ OutAuxFunc::editProfile(
 	  return -1;
 	}
       itprv = std::find_if(profvect.begin(), profvect.end(), []
-      (auto &el)
+      (auto &el) 
 	{
 	  return std::get<0>(el) == "Name";
 	});
@@ -335,7 +335,7 @@ OutAuxFunc::editProfile(
 	    }
 	}
       itprv = std::find_if(profvect.begin(), profvect.end(), []
-      (auto &el)
+      (auto &el) 
 	{
 	  return std::get<0>(el) == "Surname";
 	});
@@ -421,7 +421,7 @@ OutAuxFunc::editProfile(
     }
 
   auto itprv = std::find_if(profvect.begin(), profvect.end(), []
-  (auto &el)
+  (auto &el) 
     {
       return std::get<0>(el) == "Avatar";
     });
@@ -701,7 +701,7 @@ OutAuxFunc::msgAutoRemove(std::string homepath, std::string Username,
 		    }
 		}
 	      std::sort(msgs.begin(), msgs.end(), []
-	      (auto &el1, auto &el2)
+	      (auto &el1, auto &el2) 
 		{
 		  std::stringstream strm;
 		  std::locale loc ("C");
@@ -798,7 +798,7 @@ OutAuxFunc::msgAutoRemove(std::string homepath, std::string Username,
 		    }
 		  yesv.erase(
 		      std::remove_if(yesv.begin(), yesv.end(), [&dif, &curtime]
-		      (auto &el)
+		      (auto &el) 
 			{
 			  return std::get<1>(el) < curtime - dif;
 			}),
@@ -813,7 +813,7 @@ OutAuxFunc::msgAutoRemove(std::string homepath, std::string Username,
 		      int lrm;
 		      strm >> lrm;
 		      msgs.erase(std::remove_if(msgs.begin(), msgs.end(), [&lrm]
-		      (auto &el)
+		      (auto &el) 
 			{
 			  std::string fnm = el.filename().u8string();
 			  fnm = fnm.substr(0, fnm.find ("f"));
@@ -1028,7 +1028,7 @@ OutAuxFunc::readFriendProfile(
   std::string rndm = filename;
   int index;
   auto itcont = std::find_if(contacts.begin(), contacts.end(), [friendkey]
-  (auto &el)
+  (auto &el) 
     {
       return std::get<1>(el) == friendkey;
     });
@@ -1167,7 +1167,7 @@ OutAuxFunc::listMessages(std::string homepath, std::string key,
 {
   std::vector<std::filesystem::path> result;
   auto itcont = std::find_if(contacts.begin(), contacts.end(), [key]
-  (auto &el)
+  (auto &el) 
     {
       return std::get<1>(el) == key;
     });

@@ -31,12 +31,12 @@ class NetworkOperations;
 class MsgSending
 {
 public:
-  MsgSending (NetworkOperations *No);
+  MsgSending(NetworkOperations *No);
   virtual
-  ~MsgSending ();
+  ~MsgSending();
   int
-  sendMsg (std::filesystem::path pvect, std::array<char, 32> keyarr,
-	   int variant, int sock, uint32_t ip, uint16_t port, bool relay);
+  sendMsg(std::filesystem::path pvect, std::array<char, 32> keyarr, int variant,
+	  int sock, uint32_t ip, uint16_t port, bool relay);
 private:
   NetworkOperations *no = nullptr;
   std::vector<std::vector<char>> msgtorelay;

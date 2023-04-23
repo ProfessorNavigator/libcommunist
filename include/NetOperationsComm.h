@@ -25,9 +25,9 @@
 class NetOperationsComm
 {
 public:
-  NetOperationsComm ();
+  NetOperationsComm();
   virtual
-  ~NetOperationsComm ();
+  ~NetOperationsComm();
 
   std::function<void
   ()> net_op_canceled_signal;
@@ -71,66 +71,66 @@ public:
   ()> friendBlocked_signal;
 
   static NetOperationsComm*
-  create_object ();
+  create_object();
 
   void
-  setPrefVector (std::vector<std::tuple<std::string, std::string>> &prefvect);
+  setPrefVector(std::vector<std::tuple<std::string, std::string>> &prefvect);
   void
-  setUsernamePasswd (std::string Username, std::string Password);
+  setUsernamePasswd(std::string Username, std::string Password);
   void
-  setHomePath (std::string homepath);
+  setHomePath(std::string homepath);
   void
-  setStunListPath (std::string path);
+  setStunListPath(std::string path);
   void
-  startNetOperations ();
+  startNetOperations();
 
   void
-  getNewFriends (std::string key);
+  getNewFriends(std::string key);
   void
-  removeFriend (std::string key);
+  removeFriend(std::string key);
   bool
-  checkIfMsgSent (std::filesystem::path p);
+  checkIfMsgSent(std::filesystem::path p);
   std::filesystem::path
-  sendMessage (std::string key, std::string nick, std::string replstr,
-	       std::filesystem::path msgpath);
+  sendMessage(std::string key, std::string nick, std::string replstr,
+	      std::filesystem::path msgpath);
   std::filesystem::path
-  sendMessage (std::string key, std::string nick, std::string replstr,
-	       std::string msgstring);
+  sendMessage(std::string key, std::string nick, std::string replstr,
+	      std::string msgstring);
   std::filesystem::path
-  sendFile (std::string key, std::string nick, std::string replstr,
-	    std::string pathtofile);
+  sendFile(std::string key, std::string nick, std::string replstr,
+	   std::string pathtofile);
   void
-  renewProfile (std::string key);
+  renewProfile(std::string key);
   void
-  fileReject (std::string key, uint64_t tm);
+  fileReject(std::string key, uint64_t tm);
   void
-  fileAccept (std::string key, uint64_t tm, std::filesystem::path sp);
+  fileAccept(std::string key, uint64_t tm, std::filesystem::path sp);
   void
-  startFriend (std::string key, int ind);
+  startFriend(std::string key, int ind);
   void
-  blockFriend (std::string key);
+  blockFriend(std::string key);
   void
-  setIPv6 (std::string ip);
+  setIPv6(std::string ip);
   void
-  setIPv4 (std::string ip);
+  setIPv4(std::string ip);
   std::filesystem::path
-  removeMsg (std::string key, std::filesystem::path msgpath);
+  removeMsg(std::string key, std::filesystem::path msgpath);
   void
-  cancelSendFile (std::string key, std::filesystem::path filepath);
+  cancelSendFile(std::string key, std::filesystem::path filepath);
   void
-  cancelReceivFile (std::string key, std::filesystem::path filepath);
+  cancelReceivFile(std::string key, std::filesystem::path filepath);
   void
-  editContByRelay (std::vector<std::string> &sendbyrel);
+  editContByRelay(std::vector<std::string> &sendbyrel);
   void
-  cancelNetOperations ();
+  cancelNetOperations();
   static void
-  cleanMemory (NetOperationsComm *noc);
+  cleanMemory(NetOperationsComm *noc);
 
 private:
   void
-  profRcvd (std::string key, int ind);
+  profRcvd(std::string key, int ind);
   void
-  contDelFunc (std::string key);
+  contDelFunc(std::string key);
   std::vector<std::tuple<std::string, std::string>> prefvect;
   std::string Username = "";
   std::string Password = "";

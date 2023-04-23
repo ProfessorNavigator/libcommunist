@@ -45,7 +45,7 @@
 class RelayOperations
 {
 public:
-  RelayOperations (
+  RelayOperations(
       std::string ipbstr,
       std::vector<std::tuple<std::array<char, 32>, uint32_t, uint16_t, int>> *getfrres,
       std::mutex *getfrresmtx,
@@ -59,49 +59,49 @@ public:
       std::vector<std::array<char, 32>> *sendbyrelay,
       std::mutex *sendbyrelaymtx);
   virtual
-  ~RelayOperations ();
+  ~RelayOperations();
   std::function<void
   (int, sockaddr_in*, std::string, std::vector<char>*)> relaymsgrcvd_signal;
   int
-  relaySend (std::array<char, 32> keyarr, std::array<char, 32> &seed,
-	     std::vector<std::vector<char>> &msgsbuf);
+  relaySend(std::array<char, 32> keyarr, std::array<char, 32> &seed,
+	    std::vector<std::vector<char>> &msgsbuf);
   int
-  relayCheck (
+  relayCheck(
       std::array<char, 32> &seed, int *cancel,
       std::tuple<uint32_t, uint16_t, std::shared_ptr<std::mutex>> reltup);
 private:
   void
-  relayRequest ();
+  relayRequest();
   void
-  relaySrv ();
+  relaySrv();
   void
-  relaySrvThread (std::mutex *thrmtx, int relaysock);
+  relaySrvThread(std::mutex *thrmtx, int relaysock);
   void
-  relayRequestThread (std::mutex *thrmtx);
+  relayRequestThread(std::mutex *thrmtx);
 #ifdef _WIN32
   int
   poll (struct pollfd *pfd, int nfds, int timeout);
 #endif
   void
-  srvOperations (int sock);
+  srvOperations(int sock);
   void
-  msgProcOperations (int sock);
+  msgProcOperations(int sock);
   bool
-  establishConnect (
+  establishConnect(
       int sock,
       std::tuple<int, std::array<char, 32>, std::array<char, 32>> *res);
   void
-  receiveRP (int sock,
-	     std::tuple<int, std::array<char, 32>, std::array<char, 32>> ttup,
-	     std::vector<char> &buf, std::array<char, 32> &seed);
+  receiveRP(int sock,
+	    std::tuple<int, std::array<char, 32>, std::array<char, 32>> ttup,
+	    std::vector<char> &buf, std::array<char, 32> &seed);
   void
-  closeSockOp (int sock, std::string msg);
+  closeSockOp(int sock, std::string msg);
   std::vector<char>
-  addMsgSize (std::vector<char> &msg);
+  addMsgSize(std::vector<char> &msg);
   int
-  sendMsg (int sock, std::vector<char> &msg);
+  sendMsg(int sock, std::vector<char> &msg);
   int
-  receiveMsgs (std::vector<char> &buf, std::vector<std::vector<char>> *msgbuf);
+  receiveMsgs(std::vector<char> &buf, std::vector<std::vector<char>> *msgbuf);
 
   uint32_t ipbindto = INADDR_ANY;
   std::vector<std::tuple<std::array<char, 32>, uint32_t, uint16_t, int>> *getfrres =
@@ -117,7 +117,7 @@ private:
   std::string enable_relay_srv = "disabled";
   std::vector<std::tuple<std::mutex*, std::string>> *threadvect = nullptr;
   std::mutex *threadvectmtx = nullptr;
-  uint16_t relayport = htons (3029);
+  uint16_t relayport = htons(3029);
   int *cancel = nullptr;
   std::vector<std::tuple<uint32_t, uint16_t>> userrelaylist;
 

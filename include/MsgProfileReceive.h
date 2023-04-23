@@ -31,49 +31,49 @@ class NetworkOperations;
 class MsgProfileReceive
 {
 public:
-  MsgProfileReceive (NetworkOperations *No);
+  MsgProfileReceive(NetworkOperations *No);
   virtual
-  ~MsgProfileReceive ();
+  ~MsgProfileReceive();
   void
-  msgMBPB (std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
-	   sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
-	   std::vector<char> &buf, bool relay);
+  msgMBPB(std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
+	  sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
+	  std::vector<char> &buf, bool relay);
   void
-  msgMbPb (std::string msgtype, std::array<char, 32> keyarr,
-	   std::vector<char> &buf);
+  msgMbPb(std::string msgtype, std::array<char, 32> keyarr,
+	  std::vector<char> &buf);
   void
-  msgMpPp (std::string msgtype, std::array<char, 32> keyarr,
-	   std::vector<char> &buf);
+  msgMpPp(std::string msgtype, std::array<char, 32> keyarr,
+	  std::vector<char> &buf);
   void
-  msgMePe (std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
-	   sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
-	   std::vector<char> &buf, bool relay);
+  msgMePe(std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
+	  sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
+	  std::vector<char> &buf, bool relay);
   void
-  msgMEPE (std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
-	   sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
-	   std::vector<char> &buf, bool relay);
+  msgMEPE(std::string msgtype, std::array<char, 32> keyarr, int rcvip6,
+	  sockaddr_in6 *from6, sockaddr_in *from, int sockipv4,
+	  std::vector<char> &buf, bool relay);
   void
-  msgMAPA (std::string msgtype, std::array<char, 32> keyarr,
-	   std::vector<char> &buf);
+  msgMAPA(std::string msgtype, std::array<char, 32> keyarr,
+	  std::vector<char> &buf);
   void
-  msgMrPr (std::string msgtype, std::array<char, 32> keyarr,
-	   std::vector<char> &buf);
+  msgMrPr(std::string msgtype, std::array<char, 32> keyarr,
+	  std::vector<char> &buf);
   void
-  msgMRPR (std::string msgtype, std::array<char, 32> keyarr,
-	   std::vector<char> &buf);
+  msgMRPR(std::string msgtype, std::array<char, 32> keyarr,
+	  std::vector<char> &buf);
   void
-  msgMIPI (std::string msgtype, std::array<char, 32> keyarr,
-	   std::vector<char> &buf);
+  msgMIPI(std::string msgtype, std::array<char, 32> keyarr,
+	  std::vector<char> &buf);
 private:
   NetworkOperations *no = nullptr;
   int
-  msgMe (std::array<char, 32> keyarr, uint64_t tm, uint64_t partnum);
+  msgMe(std::array<char, 32> keyarr, uint64_t tm, uint64_t partnum);
   int
-  msgPe (std::array<char, 32> keyarr, uint64_t tm, uint64_t partnum);
+  msgPe(std::array<char, 32> keyarr, uint64_t tm, uint64_t partnum);
   int
-  msgME (std::array<char, 32> keyarr, uint64_t tm);
+  msgME(std::array<char, 32> keyarr, uint64_t tm);
   int
-  msgPE (std::array<char, 32> keyarr, uint64_t tm);
+  msgPE(std::array<char, 32> keyarr, uint64_t tm);
 };
 
 #endif /* SRC_MSGPROFILERECEIVE_H_ */
